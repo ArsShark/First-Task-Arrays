@@ -6,6 +6,14 @@ package by.grechanikovars.arraytask.entity;
 public abstract class AbstractArray {
 
     /**
+     * Returns the unique identifier of this array.
+     *
+     * @return array id
+     */
+    public abstract long getId();
+
+    /**
+     * Returns the number of elements in the array.
      *
      * @return size of the array
      */
