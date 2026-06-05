@@ -12,9 +12,6 @@ import java.util.OptionalInt;
 import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 
-/**
- * Implements statistical operations using Java Streams and Optional.
- */
 public class ArrayStatServiceImpl implements ArrayStatService {
 
     private static final Logger logger = LogManager.getLogger(ArrayStatServiceImpl.class);

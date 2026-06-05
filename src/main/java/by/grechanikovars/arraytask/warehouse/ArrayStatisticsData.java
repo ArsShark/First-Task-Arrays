@@ -1,9 +1,5 @@
 package by.grechanikovars.arraytask.warehouse;
 
-/**
- * Immutable value object that holds pre-computed statistics for one IntArray.
- * Stored in ArrayWarehouse, keyed by array id.
- */
 public class ArrayStatisticsData {
 
     private final int min;
@@ -11,12 +7,6 @@ public class ArrayStatisticsData {
     private final long sum;
     private final double average;
 
-    /**
-     * @param min     minimum element value
-     * @param max     maximum element value
-     * @param sum     sum of all elements
-     * @param average arithmetic mean of all elements
-     */
     public ArrayStatisticsData(int min, int max, long sum, double average) {
         this.min = min;
         this.max = max;
@@ -42,11 +32,8 @@ public class ArrayStatisticsData {
 
     @Override
     public String toString() {
-        return "ArrayStatisticsData{"
-                + "min=" + min
-                + ", max=" + max
-                + ", sum=" + sum
-                + ", average=" + average
-                + "}";
+        return String.format(
+                "ArrayStatisticsData{min=%d, max=%d, sum=%d, average=%.2f}",
+                min, max, sum, average);
     }
 }

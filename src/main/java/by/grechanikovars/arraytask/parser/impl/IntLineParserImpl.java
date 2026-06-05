@@ -9,10 +9,6 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/**
- * Parses integer values from a text line.
- * Even if the line contains invalid tokens, all recognisable integers are extracted and returned.
- */
 public class IntLineParserImpl implements LineParser {
 
     private static final Logger logger = LogManager.getLogger(IntLineParserImpl.class);

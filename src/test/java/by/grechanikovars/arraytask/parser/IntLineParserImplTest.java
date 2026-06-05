@@ -6,10 +6,6 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-/**
- * Tests for IntLineParserImpl.
- * Structure: given (preconditions), when (method call), then (assertion).
- */
 class IntLineParserImplTest {
 
     private LineParser parser;

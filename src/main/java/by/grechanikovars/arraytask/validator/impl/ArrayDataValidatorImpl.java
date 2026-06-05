@@ -6,15 +6,11 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.regex.Pattern;
 
-/**
- * Validates whether a line from the data file contains only integers
- * separated by allowed characters (spaces, commas, semicolons, hyphens).
- */
 public class ArrayDataValidatorImpl implements DataValidator {
 
     private static final Logger logger = LogManager.getLogger(ArrayDataValidatorImpl.class);
     private static final Pattern VALID_LINE_PATTERN =
-            Pattern.compile("^[\\d\\s,;\\-\u2013\u2014]+$");
+            Pattern.compile("^[\\d\\s,;\\-–—]+$");
 
     @Override
     public boolean isLineValid(String line) {

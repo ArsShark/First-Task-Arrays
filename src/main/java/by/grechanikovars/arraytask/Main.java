@@ -1,19 +1,30 @@
 package by.grechanikovars.arraytask;
 
+import by.grechanikovars.arraytask.comparator.ArrayFirstElementComparator;
+import by.grechanikovars.arraytask.comparator.ArrayIdComparator;
+import by.grechanikovars.arraytask.comparator.ArraySizeComparator;
 import by.grechanikovars.arraytask.entity.IntArray;
 import by.grechanikovars.arraytask.exception.ArrayException;
 import by.grechanikovars.arraytask.factory.ArrayCreator;
 import by.grechanikovars.arraytask.factory.impl.IntArrayCreatorImpl;
-import by.grechanikovars.arraytask.parser.impl.IntLineParserImpl;
 import by.grechanikovars.arraytask.parser.LineParser;
+import by.grechanikovars.arraytask.parser.impl.IntLineParserImpl;
 import by.grechanikovars.arraytask.reader.DataReader;
 import by.grechanikovars.arraytask.reader.impl.FileDataReaderImpl;
+import by.grechanikovars.arraytask.repository.ArrayRepository;
+import by.grechanikovars.arraytask.repository.impl.ArrayRepositoryImpl;
 import by.grechanikovars.arraytask.service.ArraySortService;
 import by.grechanikovars.arraytask.service.ArrayStatService;
 import by.grechanikovars.arraytask.service.impl.ArraySortServiceImpl;
 import by.grechanikovars.arraytask.service.impl.ArrayStatServiceImpl;
-import by.grechanikovars.arraytask.validator.impl.ArrayDataValidatorImpl;
+import by.grechanikovars.arraytask.specification.ArraySpecification;
+import by.grechanikovars.arraytask.specification.impl.FindByIdSpecificationImpl;
+import by.grechanikovars.arraytask.specification.impl.FindByMaxGreaterThanSpecificationImpl;
+import by.grechanikovars.arraytask.specification.impl.FindBySumGreaterThanSpecificationImpl;
 import by.grechanikovars.arraytask.validator.DataValidator;
+import by.grechanikovars.arraytask.validator.impl.ArrayDataValidatorImpl;
+import by.grechanikovars.arraytask.warehouse.ArrayStatisticsData;
+import by.grechanikovars.arraytask.warehouse.ArrayWarehouse;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -32,54 +43,104 @@ public class Main {
         ArrayCreator creator = new IntArrayCreatorImpl();
         ArrayStatService statService = new ArrayStatServiceImpl();
         ArraySortService sortService = new ArraySortServiceImpl();
+        ArrayRepository repository = ArrayRepositoryImpl.getInstance();
 
         try {
             List<String> lines = reader.readLinesFromFile(DATA_FILE);
             for (String line : lines) {
-                processLine(line, validator, parser, creator, statService, sortService);
+                if (line.isBlank()) {
+                    logger.warn("Skipping blank line");
+                    continue;
+                }
+                if (!validator.isLineValid(line)) {
+                    logger.warn("Invalid line, extracting available integers: [{}]", line);
+                }
+                int[] numbers = parser.parseLine(line);
+                if (numbers.length == 0) {
+                    logger.warn("No integers found in line: [{}]", line);
+                    continue;
+                }
+                IntArray array = creator.create(numbers);
+                repository.add(array);
+                logger.info("Added to repository: {}", array);
             }
+
+            demonstratePart1(statService, sortService, repository);
+            demonstratePart2(repository);
+
         } catch (ArrayException e) {
-            logger.error("Fatal error while reading data file: {}", e.getMessage(), e);
+            logger.error("Fatal error: {}", e.getMessage(), e);
         }
     }
 
-    private static void processLine(
-            String line,
-            DataValidator validator,
-            LineParser parser,
-            ArrayCreator creator,
+    private static void demonstratePart1(
             ArrayStatService statService,
-            ArraySortService sortService) throws ArrayException {
+            ArraySortService sortService,
+            ArrayRepository repository) throws ArrayException {
 
-        if (line.isBlank()) {
-            logger.warn("Skipping blank line");
+        List<IntArray> all = repository.getAll();
+        for (IntArray array : all) {
+            Optional<Integer> min = statService.findMin(array);
+            Optional<Integer> max = statService.findMax(array);
+            Optional<Long> sum = statService.findSum(array);
+            Optional<Double> avg = statService.findAverage(array);
+            logger.info("Stats for {}: min={} max={} sum={} avg={}",
+                    array, min.orElse(null), max.orElse(null),
+                    sum.orElse(null), avg.orElse(null));
+
+            IntArray bubbleCopy = new IntArray(array.getElements());
+            sortService.bubbleSort(bubbleCopy);
+            logger.info("Bubble sort: {}", bubbleCopy);
+
+            IntArray selectionCopy = new IntArray(array.getElements());
+            sortService.selectionSort(selectionCopy);
+            logger.info("Selection sort: {}", selectionCopy);
+        }
+    }
+
+    private static void demonstratePart2(ArrayRepository repository) throws ArrayException {
+        List<IntArray> all = repository.getAll();
+        if (all.isEmpty()) {
+            logger.warn("Repository is empty, skipping Part II demo");
             return;
         }
-        if (!validator.isLineValid(line)) {
-            logger.warn("Invalid line - extracting available integers: [{}]", line);
+
+        ArrayWarehouse warehouse = ArrayWarehouse.getInstance();
+        IntArray first = all.get(0);
+        long firstId = first.getId();
+        Optional<ArrayStatisticsData> statsOpt = warehouse.getStatistics(firstId);
+        if (statsOpt.isPresent()) {
+            ArrayStatisticsData stats = statsOpt.get();
+            logger.info("Warehouse stats for id={}: {}", firstId, stats);
         }
-        int[] numbers = parser.parseLine(line);
-        if (numbers.length == 0) {
-            logger.warn("No integers could be extracted from line: [{}]", line);
-            return;
-        }
-        IntArray array = creator.create(numbers);
-        logger.info("--- Array: {} ---", array);
 
-        Optional<Integer> min = statService.findMin(array);
-        Optional<Integer> max = statService.findMax(array);
-        Optional<Long> sum = statService.findSum(array);
-        Optional<Double> avg = statService.findAverage(array);
+        ArraySpecification byId = new FindByIdSpecificationImpl(firstId);
+        List<IntArray> byIdResult = repository.findAll(byId);
+        logger.info("findAll by id={}: {}", firstId, byIdResult);
 
-        logger.info("Min={} Max={} Sum={} Avg={}",
-                min.orElse(null), max.orElse(null), sum.orElse(null), avg.orElse(null));
+        ArraySpecification bigSum = new FindBySumGreaterThanSpecificationImpl(10L);
+        List<IntArray> bigSumResult = repository.findAllFunctional(bigSum);
+        logger.info("findAllFunctional sum>10: {}", bigSumResult);
 
-        IntArray bubbleSorted = creator.create(numbers);
-        sortService.bubbleSort(bubbleSorted);
-        logger.info("Bubble sort:    {}", bubbleSorted);
+        ArraySpecification bigMax = new FindByMaxGreaterThanSpecificationImpl(50);
+        List<IntArray> bigMaxResult = repository.findAll(bigMax);
+        logger.info("findAll max>50: {}", bigMaxResult);
 
-        IntArray selectionSorted = creator.create(numbers);
-        sortService.selectionSort(selectionSorted);
-        logger.info("Selection sort: {}", selectionSorted);
+        repository.sort(new ArrayIdComparator());
+        logger.info("After sort by id: {}", repository.getAll());
+
+        repository.sort(new ArraySizeComparator());
+        logger.info("After sort by size: {}", repository.getAll());
+
+        repository.sort(new ArrayFirstElementComparator());
+        logger.info("After sort by first element: {}", repository.getAll());
+
+        IntArray target = all.get(0);
+        logger.info("Before setElements: warehouse={}", warehouse.getStatistics(target.getId()));
+        target.setElements(new int[]{1000, 2000, 3000});
+        logger.info("After  setElements: warehouse={}", warehouse.getStatistics(target.getId()));
+
+        boolean removed = repository.remove(firstId);
+        logger.info("Removed id={}: {}", firstId, removed);
     }
 }

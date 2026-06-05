@@ -6,10 +6,6 @@ import by.grechanikovars.arraytask.service.ArraySortService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-/**
- * Implements two classic O(n²) sorting algorithms: Bubble Sort and Selection Sort.
- * Both sort the array in ascending order and modify the IntArray in place.
- */
 public class ArraySortServiceImpl implements ArraySortService {
 
     private static final Logger logger = LogManager.getLogger(ArraySortServiceImpl.class);

@@ -10,13 +10,8 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-/**
- * Tests for ArrayStatService.
- * Structure: given (preconditions), when (method call), then (assertion).
- */
 class ArrayStatServiceTest {
 
-    // --- Test constants (objects created via new, not via factory) ---
     private static final int[] MIXED_ELEMENTS = {3, 1, 4, 1, 5, 9, 2, 6};
     private static final int[] EMPTY_ELEMENTS = {};
     private static final int[] SINGLE_ELEMENT = {42};
