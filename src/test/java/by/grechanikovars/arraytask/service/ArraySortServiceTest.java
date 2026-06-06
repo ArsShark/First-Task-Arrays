@@ -10,104 +10,104 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class ArraySortServiceTest {
 
-    private static final int[] UNSORTED_ELEMENTS = {5, 3, 8, 1, 9, 2};
-    private static final int[] EXPECTED_SORTED = {1, 2, 3, 5, 8, 9};
-    private static final int[] SINGLE_ELEMENT = {42};
-    private static final int[] ALREADY_SORTED = {1, 2, 3, 4, 5};
-    private static final int[] NEGATIVE_ELEMENTS = {-1, -5, -3, -2};
-    private static final int[] EXPECTED_NEGATIVE_SORTED = {-5, -3, -2, -1};
+  private static final int[] UNSORTED_ELEMENTS = {5, 3, 8, 1, 9, 2};
+  private static final int[] EXPECTED_SORTED = {1, 2, 3, 5, 8, 9};
+  private static final int[] SINGLE_ELEMENT = {42};
+  private static final int[] ALREADY_SORTED = {1, 2, 3, 4, 5};
+  private static final int[] NEGATIVE_ELEMENTS = {-1, -5, -3, -2};
+  private static final int[] EXPECTED_NEGATIVE_SORTED = {-5, -3, -2, -1};
 
-    private ArraySortService service;
+  private ArraySortService service;
 
-    @BeforeEach
-    void setUp() {
-        service = new ArraySortServiceImpl();
-    }
+  @BeforeEach
+  void setUp() {
+    service = new ArraySortServiceImpl();
+  }
 
-    @Test
-    void testBubbleSortProducesAscendingOrder() throws ArrayException {
-        // given
-        IntArray array = new IntArray(UNSORTED_ELEMENTS);
-        // when
-        service.bubbleSort(array);
-        // then
-        assertArrayEquals(EXPECTED_SORTED, array.getElements());
-    }
+  @Test
+  void testBubbleSortProducesAscendingOrder() throws ArrayException {
+    // given
+    IntArray array = new IntArray(UNSORTED_ELEMENTS);
+    // when
+    service.bubbleSort(array);
+    // then
+    assertArrayEquals(EXPECTED_SORTED, array.getElements());
+  }
 
-    @Test
-    void testBubbleSortSingleElementArrayUnchanged() throws ArrayException {
+  @Test
+  void testBubbleSortSingleElementArrayUnchanged() throws ArrayException {
 
-        IntArray array = new IntArray(SINGLE_ELEMENT);
+    IntArray array = new IntArray(SINGLE_ELEMENT);
 
-        service.bubbleSort(array);
+    service.bubbleSort(array);
 
-        assertArrayEquals(SINGLE_ELEMENT, array.getElements());
-    }
+    assertArrayEquals(SINGLE_ELEMENT, array.getElements());
+  }
 
-    @Test
-    void testBubbleSortAlreadySortedArrayUnchanged() throws ArrayException {
+  @Test
+  void testBubbleSortAlreadySortedArrayUnchanged() throws ArrayException {
 
-        IntArray array = new IntArray(ALREADY_SORTED);
+    IntArray array = new IntArray(ALREADY_SORTED);
 
-        service.bubbleSort(array);
+    service.bubbleSort(array);
 
-        assertArrayEquals(ALREADY_SORTED, array.getElements());
-    }
+    assertArrayEquals(ALREADY_SORTED, array.getElements());
+  }
 
-    @Test
-    void testBubbleSortNegativeElements() throws ArrayException {
+  @Test
+  void testBubbleSortNegativeElements() throws ArrayException {
 
-        IntArray array = new IntArray(NEGATIVE_ELEMENTS);
+    IntArray array = new IntArray(NEGATIVE_ELEMENTS);
 
-        service.bubbleSort(array);
+    service.bubbleSort(array);
 
-        assertArrayEquals(EXPECTED_NEGATIVE_SORTED, array.getElements());
-    }
+    assertArrayEquals(EXPECTED_NEGATIVE_SORTED, array.getElements());
+  }
 
-    @Test
-    void testBubbleSortNullThrowsArrayException() {
+  @Test
+  void testBubbleSortNullThrowsArrayException() {
 
-        IntArray array = null;
+    IntArray array = null;
 
-        assertThrows(ArrayException.class, () -> service.bubbleSort(array));
-    }
+    assertThrows(ArrayException.class, () -> service.bubbleSort(array));
+  }
 
 
-    @Test
-    void testSelectionSortProducesAscendingOrder() throws ArrayException {
+  @Test
+  void testSelectionSortProducesAscendingOrder() throws ArrayException {
 
-        IntArray array = new IntArray(UNSORTED_ELEMENTS);
+    IntArray array = new IntArray(UNSORTED_ELEMENTS);
 
-        service.selectionSort(array);
+    service.selectionSort(array);
 
-        assertArrayEquals(EXPECTED_SORTED, array.getElements());
-    }
+    assertArrayEquals(EXPECTED_SORTED, array.getElements());
+  }
 
-    @Test
-    void testSelectionSortSingleElementArrayUnchanged() throws ArrayException {
+  @Test
+  void testSelectionSortSingleElementArrayUnchanged() throws ArrayException {
 
-        IntArray array = new IntArray(SINGLE_ELEMENT);
+    IntArray array = new IntArray(SINGLE_ELEMENT);
 
-        service.selectionSort(array);
+    service.selectionSort(array);
 
-        assertArrayEquals(SINGLE_ELEMENT, array.getElements());
-    }
+    assertArrayEquals(SINGLE_ELEMENT, array.getElements());
+  }
 
-    @Test
-    void testSelectionSortAlreadySortedArrayUnchanged() throws ArrayException {
+  @Test
+  void testSelectionSortAlreadySortedArrayUnchanged() throws ArrayException {
 
-        IntArray array = new IntArray(ALREADY_SORTED);
+    IntArray array = new IntArray(ALREADY_SORTED);
 
-        service.selectionSort(array);
+    service.selectionSort(array);
 
-        assertArrayEquals(ALREADY_SORTED, array.getElements());
-    }
+    assertArrayEquals(ALREADY_SORTED, array.getElements());
+  }
 
-    @Test
-    void testSelectionSortNullThrowsArrayException() {
+  @Test
+  void testSelectionSortNullThrowsArrayException() {
 
-        IntArray array = null;
+    IntArray array = null;
 
-        assertThrows(ArrayException.class, () -> service.selectionSort(array));
-    }
+    assertThrows(ArrayException.class, () -> service.selectionSort(array));
+  }
 }

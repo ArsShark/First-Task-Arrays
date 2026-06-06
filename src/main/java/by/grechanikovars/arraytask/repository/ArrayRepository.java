@@ -9,15 +9,15 @@ import java.util.List;
 
 public interface ArrayRepository {
 
-    void add(IntArray array);
+  void add(IntArray array);
 
-    boolean remove(long id);
+  boolean remove(long id);
 
-    List<IntArray> findAll(ArraySpecification specification);
+  List<IntArray> findAll(ArraySpecification specification);
 
-    List<IntArray> findAllFunctional(ArraySpecification specification);
+  List<IntArray> findAllFunctional(ArraySpecification specification);
 
-    void sort(Comparator<IntArray> comparator) throws ArrayException;
+  void sort(Comparator<IntArray> comparator) throws ArrayException;
 
-    List<IntArray> getAll();
+  List<IntArray> getAll();
 }

@@ -9,23 +9,23 @@ import java.util.Optional;
 
 public class FindByMaxGreaterThanSpecificationImpl implements ArraySpecification {
 
-    private final int threshold;
+  private final int threshold;
 
-    public FindByMaxGreaterThanSpecificationImpl(int threshold) {
-        this.threshold = threshold;
-    }
+  public FindByMaxGreaterThanSpecificationImpl(int threshold) {
+    this.threshold = threshold;
+  }
 
-    @Override
-    public boolean specify(IntArray array) {
-        ArrayWarehouse warehouse = ArrayWarehouse.getInstance();
-        long arrayId = array.getId();
-        Optional<ArrayStatisticsData> statsOpt = warehouse.getStatistics(arrayId);
-        if (statsOpt.isPresent()) {
-            ArrayStatisticsData stats = statsOpt.get();
-            int max = stats.getMax();
-            return max > threshold;
-        } else {
-            return false;
-        }
+  @Override
+  public boolean specify(IntArray array) {
+    ArrayWarehouse warehouse = ArrayWarehouse.getInstance();
+    long arrayId = array.getId();
+    Optional<ArrayStatisticsData> statsOpt = warehouse.getStatistics(arrayId);
+    if (statsOpt.isPresent()) {
+      ArrayStatisticsData stats = statsOpt.get();
+      int max = stats.getMax();
+      return max > threshold;
+    } else {
+      return false;
     }
+  }
 }

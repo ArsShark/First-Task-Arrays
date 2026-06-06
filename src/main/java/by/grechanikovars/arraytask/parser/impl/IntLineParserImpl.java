@@ -11,19 +11,19 @@ import java.util.regex.Pattern;
 
 public class IntLineParserImpl implements LineParser {
 
-    private static final Logger logger = LogManager.getLogger(IntLineParserImpl.class);
-    private static final Pattern NUMBER_PATTERN = Pattern.compile("-?\\d+");
+  private static final Logger logger = LogManager.getLogger(IntLineParserImpl.class);
+  private static final Pattern NUMBER_PATTERN = Pattern.compile("-?\\d+");
 
-    @Override
-    public int[] parseLine(String line) {
-        Matcher matcher = NUMBER_PATTERN.matcher(line);
-        List<Integer> numbers = new ArrayList<>();
-        while (matcher.find()) {
-            numbers.add(Integer.parseInt(matcher.group()));
-        }
-        if (numbers.isEmpty()) {
-            logger.warn("No integers found in line: [{}]", line);
-        }
-        return numbers.stream().mapToInt(Integer::intValue).toArray();
+  @Override
+  public int[] parseLine(String line) {
+    Matcher matcher = NUMBER_PATTERN.matcher(line);
+    List<Integer> numbers = new ArrayList<>();
+    while (matcher.find()) {
+      numbers.add(Integer.parseInt(matcher.group()));
     }
+    if (numbers.isEmpty()) {
+      logger.warn("No integers found in line: [{}]", line);
+    }
+    return numbers.stream().mapToInt(Integer::intValue).toArray();
+  }
 }

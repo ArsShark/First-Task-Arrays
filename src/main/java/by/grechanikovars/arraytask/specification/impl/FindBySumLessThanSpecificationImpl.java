@@ -9,23 +9,23 @@ import java.util.Optional;
 
 public class FindBySumLessThanSpecificationImpl implements ArraySpecification {
 
-    private final long threshold;
+  private final long threshold;
 
-    public FindBySumLessThanSpecificationImpl(long threshold) {
-        this.threshold = threshold;
-    }
+  public FindBySumLessThanSpecificationImpl(long threshold) {
+    this.threshold = threshold;
+  }
 
-    @Override
-    public boolean specify(IntArray array) {
-        ArrayWarehouse warehouse = ArrayWarehouse.getInstance();
-        long arrayId = array.getId();
-        Optional<ArrayStatisticsData> statsOpt = warehouse.getStatistics(arrayId);
-        if (statsOpt.isPresent()) {
-            ArrayStatisticsData stats = statsOpt.get();
-            long sum = stats.getSum();
-            return sum < threshold;
-        } else {
-            return false;
-        }
+  @Override
+  public boolean specify(IntArray array) {
+    ArrayWarehouse warehouse = ArrayWarehouse.getInstance();
+    long arrayId = array.getId();
+    Optional<ArrayStatisticsData> statsOpt = warehouse.getStatistics(arrayId);
+    if (statsOpt.isPresent()) {
+      ArrayStatisticsData stats = statsOpt.get();
+      long sum = stats.getSum();
+      return sum < threshold;
+    } else {
+      return false;
     }
+  }
 }

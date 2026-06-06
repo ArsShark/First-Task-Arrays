@@ -9,99 +9,99 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class ArrayDataValidatorImplTest {
 
-    private DataValidator validator;
+  private DataValidator validator;
 
-    @BeforeEach
-    void setUp() {
-        validator = new ArrayDataValidatorImpl();
-    }
+  @BeforeEach
+  void setUp() {
+    validator = new ArrayDataValidatorImpl();
+  }
 
-    @Test
-    void testSemicolonSeparatedLineIsValid() {
-        // given
-        String line = "1; 2; 3";
-        // when
-        boolean result = validator.isLineValid(line);
-        // then
-        assertTrue(result);
-    }
+  @Test
+  void testSemicolonSeparatedLineIsValid() {
+    // given
+    String line = "1; 2; 3";
+    // when
+    boolean result = validator.isLineValid(line);
+    // then
+    assertTrue(result);
+  }
 
-    @Test
-    void testCommaSeparatedLineIsValid() {
-        String line = "1, 2, 3";
+  @Test
+  void testCommaSeparatedLineIsValid() {
+    String line = "1, 2, 3";
 
-        boolean result = validator.isLineValid(line);
+    boolean result = validator.isLineValid(line);
 
-        assertTrue(result);
-    }
+    assertTrue(result);
+  }
 
-    @Test
-    void testSpaceSeparatedLineIsValid() {
+  @Test
+  void testSpaceSeparatedLineIsValid() {
 
-        String line = "3 4 7";
+    String line = "3 4 7";
 
-        boolean result = validator.isLineValid(line);
+    boolean result = validator.isLineValid(line);
 
-        assertTrue(result);
-    }
+    assertTrue(result);
+  }
 
-    @Test
-    void testHyphenSeparatedLineIsValid() {
+  @Test
+  void testHyphenSeparatedLineIsValid() {
 
-        String line = "11 - 2 - 42";
+    String line = "11 - 2 - 42";
 
-        boolean result = validator.isLineValid(line);
+    boolean result = validator.isLineValid(line);
 
-        assertTrue(result);
-    }
+    assertTrue(result);
+  }
 
-    @Test
-    void testLineWithLettersIsInvalid() {
+  @Test
+  void testLineWithLettersIsInvalid() {
 
-        String line = "1y1 21 32";
+    String line = "1y1 21 32";
 
-        boolean result = validator.isLineValid(line);
+    boolean result = validator.isLineValid(line);
 
-        assertFalse(result);
-    }
+    assertFalse(result);
+  }
 
-    @Test
-    void testLineWithDoubleDotIsInvalid() {
+  @Test
+  void testLineWithDoubleDotIsInvalid() {
 
-        String line = "6..5 77";
+    String line = "6..5 77";
 
-        boolean result = validator.isLineValid(line);
+    boolean result = validator.isLineValid(line);
 
-        assertFalse(result);
-    }
+    assertFalse(result);
+  }
 
-    @Test
-    void testNullLineIsInvalid() {
+  @Test
+  void testNullLineIsInvalid() {
 
-        String line = null;
+    String line = null;
 
-        boolean result = validator.isLineValid(line);
+    boolean result = validator.isLineValid(line);
 
-        assertFalse(result);
-    }
+    assertFalse(result);
+  }
 
-    @Test
-    void testEmptyLineIsInvalid() {
+  @Test
+  void testEmptyLineIsInvalid() {
 
-        String line = "";
+    String line = "";
 
-        boolean result = validator.isLineValid(line);
+    boolean result = validator.isLineValid(line);
 
-        assertFalse(result);
-    }
+    assertFalse(result);
+  }
 
-    @Test
-    void testBlankLineIsInvalid() {
+  @Test
+  void testBlankLineIsInvalid() {
 
-        String line = "   ";
+    String line = "   ";
 
-        boolean result = validator.isLineValid(line);
+    boolean result = validator.isLineValid(line);
 
-        assertFalse(result);
-    }
+    assertFalse(result);
+  }
 }

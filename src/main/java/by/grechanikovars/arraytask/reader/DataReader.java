@@ -6,5 +6,5 @@ import java.util.List;
 
 public interface DataReader {
 
-    List<String> readLinesFromFile(String filePath) throws ArrayException;
+  List<String> readLinesFromFile(String filePath) throws ArrayException;
 }

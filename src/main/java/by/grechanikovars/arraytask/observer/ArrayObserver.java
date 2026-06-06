@@ -4,5 +4,5 @@ import by.grechanikovars.arraytask.entity.IntArray;
 
 public interface ArrayObserver {
 
-    void update(IntArray array);
+  void update(IntArray array);
 }

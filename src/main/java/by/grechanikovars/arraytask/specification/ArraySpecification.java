@@ -4,5 +4,5 @@ import by.grechanikovars.arraytask.entity.IntArray;
 
 public interface ArraySpecification {
 
-    boolean specify(IntArray array);
+  boolean specify(IntArray array);
 }

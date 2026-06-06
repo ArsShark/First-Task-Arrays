@@ -12,90 +12,98 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class ArrayRepositoryImpl implements ArrayRepository {
 
-    private static final Logger logger = LogManager.getLogger(ArrayRepositoryImpl.class);
+  private static final Logger logger = LogManager.getLogger(ArrayRepositoryImpl.class);
 
-    private static ArrayRepositoryImpl instance;
+  private static ArrayRepositoryImpl instance;
 
-    private final List<IntArray> arrays;
+  private final List<IntArray> arrays;
+  private final Map<Long, ArrayObserver> observerMap;
 
-    private ArrayRepositoryImpl() {
-        arrays = new ArrayList<>();
+  private ArrayRepositoryImpl() {
+    arrays = new ArrayList<>();
+    observerMap = new HashMap<>();
+  }
+
+  public static ArrayRepositoryImpl getInstance() {
+    if (instance == null) {
+      instance = new ArrayRepositoryImpl();
     }
+    return instance;
+  }
 
-    public static ArrayRepositoryImpl getInstance() {
-        if (instance == null) {
-            instance = new ArrayRepositoryImpl();
-        }
-        return instance;
-    }
+  @Override
+  public void add(IntArray array) {
+    ArrayObserver observer = new ArrayStatisticsObserverImpl();
+    array.addObserver(observer);
+    arrays.add(array);
+    long arrayId = array.getId();
+    observerMap.put(arrayId, observer);
+    observer.update(array);
+    logger.info("Array added to repository, id={}", arrayId);
+  }
 
-    @Override
-    public void add(IntArray array) {
-        ArrayObserver observer = new ArrayStatisticsObserverImpl();
-        array.addObserver(observer);
-        arrays.add(array);
-        observer.update(array);
-        long arrayId = array.getId();
-        logger.info("Array added to repository, id={}", arrayId);
+  @Override
+  public boolean remove(long id) {
+    IntArray target = null;
+    for (IntArray array : arrays) {
+      long arrayId = array.getId();
+      if (arrayId == id) {
+        target = array;
+        break;
+      }
     }
+    if (target != null) {
+      ArrayObserver observer = observerMap.get(id);
+      target.removeObserver(observer);
+      observerMap.remove(id);
+      arrays.remove(target);
+      ArrayWarehouse warehouse = ArrayWarehouse.getInstance();
+      warehouse.removeStatistics(id);
+      logger.info("Array removed from repository, id={}", id);
+      return true;
+    } else {
+      logger.warn("Array with id={} not found in repository", id);
+      return false;
+    }
+  }
 
-    @Override
-    public boolean remove(long id) {
-        IntArray target = null;
-        for (IntArray array : arrays) {
-            long arrayId = array.getId();
-            if (arrayId == id) {
-                target = array;
-                break;
-            }
-        }
-        if (target != null) {
-            arrays.remove(target);
-            ArrayWarehouse warehouse = ArrayWarehouse.getInstance();
-            warehouse.removeStatistics(id);
-            logger.info("Array removed from repository, id={}", id);
-            return true;
-        } else {
-            logger.warn("Array with id={} not found in repository", id);
-            return false;
-        }
+  @Override
+  public List<IntArray> findAll(ArraySpecification specification) {
+    List<IntArray> result = new ArrayList<>();
+    for (IntArray array : arrays) {
+      if (specification.specify(array)) {
+        result.add(array);
+      }
     }
+    return result;
+  }
 
-    @Override
-    public List<IntArray> findAll(ArraySpecification specification) {
-        List<IntArray> result = new ArrayList<>();
-        for (IntArray array : arrays) {
-            if (specification.specify(array)) {
-                result.add(array);
-            }
-        }
-        return result;
-    }
+  @Override
+  public List<IntArray> findAllFunctional(ArraySpecification specification) {
+    Stream<IntArray> arrayStream = arrays.stream();
+    Stream<IntArray> filteredStream = arrayStream.filter(specification::specify);
+    return filteredStream.collect(Collectors.toList());
+  }
 
-    @Override
-    public List<IntArray> findAllFunctional(ArraySpecification specification) {
-        Stream<IntArray> arrayStream = arrays.stream();
-        Stream<IntArray> filteredStream = arrayStream.filter(specification::specify);
-        return filteredStream.collect(Collectors.toList());
+  @Override
+  public void sort(Comparator<IntArray> comparator) throws ArrayException {
+    if (comparator == null) {
+      throw new ArrayException("Comparator must not be null");
     }
+    arrays.sort(comparator);
+    logger.info("Repository sorted");
+  }
 
-    @Override
-    public void sort(Comparator<IntArray> comparator) throws ArrayException {
-        if (comparator == null) {
-            throw new ArrayException("Comparator must not be null");
-        }
-        arrays.sort(comparator);
-        logger.info("Repository sorted");
-    }
-
-    @Override
-    public List<IntArray> getAll() {
-        return new ArrayList<>(arrays);
-    }
+  @Override
+  public List<IntArray> getAll() {
+    return new ArrayList<>(arrays);
+  }
 }

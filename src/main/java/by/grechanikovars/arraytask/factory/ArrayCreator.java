@@ -5,5 +5,5 @@ import by.grechanikovars.arraytask.entity.IntArray;
 
 public interface ArrayCreator {
 
-    IntArray create(int[] elements);
+  IntArray create(int[] elements);
 }
