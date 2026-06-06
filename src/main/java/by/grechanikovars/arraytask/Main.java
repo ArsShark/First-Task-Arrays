@@ -87,14 +87,15 @@ public class Main {
       logger.info("Stats for {}: min={} max={} sum={} avg={}",
               array, min.orElse(null), max.orElse(null),
               sum.orElse(null), avg.orElse(null));
+      int[] original = array.getElements();
 
-      IntArray bubbleCopy = new IntArray(array.getElements());
-      sortService.bubbleSort(bubbleCopy);
-      logger.info("Bubble sort: {}", bubbleCopy);
+      sortService.bubbleSort(array);
+      logger.info("Bubble sort:    {}", array);
+      array.setElements(original);
 
-      IntArray selectionCopy = new IntArray(array.getElements());
-      sortService.selectionSort(selectionCopy);
-      logger.info("Selection sort: {}", selectionCopy);
+      sortService.selectionSort(array);
+      logger.info("Selection sort: {}", array);
+      array.setElements(original);
     }
   }
 
