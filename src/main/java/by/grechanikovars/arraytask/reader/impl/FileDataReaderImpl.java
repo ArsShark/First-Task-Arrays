@@ -23,7 +23,7 @@ public class FileDataReaderImpl implements DataReader {
       logger.info("Read {} line(s) from file: {}", lines.size(), filePath);
       return lines;
     } catch (IOException e) {
-      throw new ArrayException("Failed to read file: " + filePath, e);
+      throw new ArrayException(String.format("Failed to read file: %s", filePath), e);
     }
   }
 }
