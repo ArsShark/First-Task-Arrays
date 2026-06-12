@@ -2,19 +2,15 @@ package by.grechanikovars.arraytask.repository.impl;
 
 import by.grechanikovars.arraytask.entity.IntArray;
 import by.grechanikovars.arraytask.exception.ArrayException;
-import by.grechanikovars.arraytask.observer.ArrayObserver;
-import by.grechanikovars.arraytask.observer.impl.ArrayStatisticsObserverImpl;
 import by.grechanikovars.arraytask.repository.ArrayRepository;
-import by.grechanikovars.arraytask.specification.ArraySpecification;
 import by.grechanikovars.arraytask.warehouse.ArrayWarehouse;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -25,11 +21,9 @@ public class ArrayRepositoryImpl implements ArrayRepository {
   private static ArrayRepositoryImpl instance;
 
   private final List<IntArray> arrays;
-  private final Map<Long, ArrayObserver> observerMap;
 
   private ArrayRepositoryImpl() {
     arrays = new ArrayList<>();
-    observerMap = new HashMap<>();
   }
 
   public static ArrayRepositoryImpl getInstance() {
@@ -41,12 +35,8 @@ public class ArrayRepositoryImpl implements ArrayRepository {
 
   @Override
   public void add(IntArray array) {
-    ArrayObserver observer = new ArrayStatisticsObserverImpl();
-    array.addObserver(observer);
     arrays.add(array);
     long arrayId = array.getId();
-    observerMap.put(arrayId, observer);
-    observer.update(array);
     logger.info("Array added to repository, id={}", arrayId);
   }
 
@@ -61,9 +51,7 @@ public class ArrayRepositoryImpl implements ArrayRepository {
       }
     }
     if (target != null) {
-      ArrayObserver observer = observerMap.get(id);
-      target.removeObserver(observer);
-      observerMap.remove(id);
+      target.setObserver(null);
       arrays.remove(target);
       ArrayWarehouse warehouse = ArrayWarehouse.getInstance();
       warehouse.removeStatistics(id);
@@ -76,10 +64,10 @@ public class ArrayRepositoryImpl implements ArrayRepository {
   }
 
   @Override
-  public List<IntArray> findAll(ArraySpecification specification) {
+  public List<IntArray> findBy(Predicate<IntArray> predicate) {
     List<IntArray> result = new ArrayList<>();
     for (IntArray array : arrays) {
-      if (specification.specify(array)) {
+      if (predicate.test(array)) {
         result.add(array);
       }
     }
@@ -87,10 +75,9 @@ public class ArrayRepositoryImpl implements ArrayRepository {
   }
 
   @Override
-  public List<IntArray> findAllFunctional(ArraySpecification specification) {
-    Stream<IntArray> arrayStream = arrays.stream();
-    Stream<IntArray> filteredStream = arrayStream.filter(specification::specify);
-    return filteredStream.collect(Collectors.toList());
+  public List<IntArray> findByFunctional(Predicate<IntArray> predicate) {
+    Stream<IntArray> arrayStream = arrays.stream().filter(predicate);
+    return arrayStream.collect(Collectors.toList());
   }
 
   @Override
@@ -105,5 +92,8 @@ public class ArrayRepositoryImpl implements ArrayRepository {
   @Override
   public List<IntArray> getAll() {
     return new ArrayList<>(arrays);
+  }
+  public void clear() {
+    arrays.clear();
   }
 }

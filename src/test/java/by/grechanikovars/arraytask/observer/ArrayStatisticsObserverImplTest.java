@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class ArrayStatisticsObserverImplTest {
 
-  private static final int[] SAMPLE_ELEMENTS = {2, 4, 6};
+  private static final int[] SAMPLE_ELEMENTS  = {2, 4, 6};
   private static final int[] UPDATED_ELEMENTS = {10, 20, 30};
 
   private ArrayObserver observer;
@@ -33,88 +33,112 @@ class ArrayStatisticsObserverImplTest {
     observer.update(array);
     // then
     long arrayId = array.getId();
-    Optional<ArrayStatisticsData> result = warehouse.getStatistics(arrayId);
-    assertTrue(result.isPresent());
+    Optional<ArrayStatisticsData> actual = warehouse.getStatistics(arrayId);
+    assertTrue(actual.isPresent());
   }
 
   @Test
   void testUpdateStoresCorrectMin() {
     IntArray array = new IntArray(SAMPLE_ELEMENTS);
+    int expected = 2;
 
     observer.update(array);
 
     long arrayId = array.getId();
-    Optional<ArrayStatisticsData> result = warehouse.getStatistics(arrayId);
-    assertTrue(result.isPresent());
-    ArrayStatisticsData stats = result.get();
-    assertEquals(2, stats.getMin());
+    Optional<ArrayStatisticsData> statsOpt = warehouse.getStatistics(arrayId);
+    assertTrue(statsOpt.isPresent());
+    ArrayStatisticsData actual = statsOpt.get();
+    assertEquals(expected, actual.min());
   }
 
   @Test
   void testUpdateStoresCorrectMax() {
     IntArray array = new IntArray(SAMPLE_ELEMENTS);
+    int expected = 6;
 
     observer.update(array);
 
     long arrayId = array.getId();
-    Optional<ArrayStatisticsData> result = warehouse.getStatistics(arrayId);
-    assertTrue(result.isPresent());
-    ArrayStatisticsData stats = result.get();
-    assertEquals(6, stats.getMax());
+    Optional<ArrayStatisticsData> statsOpt = warehouse.getStatistics(arrayId);
+
+    assertTrue(statsOpt.isPresent());
+    ArrayStatisticsData actual = statsOpt.get();
+    assertEquals(expected, actual.max());
   }
 
   @Test
   void testUpdateStoresCorrectSum() {
     IntArray array = new IntArray(SAMPLE_ELEMENTS);
+    long expected = 12L;
 
     observer.update(array);
 
     long arrayId = array.getId();
-    Optional<ArrayStatisticsData> result = warehouse.getStatistics(arrayId);
-    assertTrue(result.isPresent());
-    ArrayStatisticsData stats = result.get();
-    assertEquals(12L, stats.getSum());
+    Optional<ArrayStatisticsData> statsOpt = warehouse.getStatistics(arrayId);
+    assertTrue(statsOpt.isPresent());
+    ArrayStatisticsData actual = statsOpt.get();
+    assertEquals(expected, actual.sum());
   }
 
   @Test
   void testUpdateStoresCorrectAverage() {
     IntArray array = new IntArray(SAMPLE_ELEMENTS);
+    double expected = 4.0;
 
     observer.update(array);
 
     long arrayId = array.getId();
-    Optional<ArrayStatisticsData> result = warehouse.getStatistics(arrayId);
-    assertTrue(result.isPresent());
-    ArrayStatisticsData stats = result.get();
-    assertEquals(4.0, stats.getAverage(), 0.001);
+    Optional<ArrayStatisticsData> statsOpt = warehouse.getStatistics(arrayId);
+    assertTrue(statsOpt.isPresent());
+    ArrayStatisticsData actual = statsOpt.get();
+    assertEquals(expected, actual.average(), 0.001);
+  }
+
+  @Test
+  void testUpdateStoresAllStatisticsCorrectly() {
+    IntArray array = new IntArray(SAMPLE_ELEMENTS);
+
+    observer.update(array);
+
+    long arrayId = array.getId();
+    Optional<ArrayStatisticsData> statsOpt = warehouse.getStatistics(arrayId);
+    assertTrue(statsOpt.isPresent());
+    ArrayStatisticsData actual = statsOpt.get();
+    assertAll(
+            () -> assertEquals(2, actual.min()),
+            () -> assertEquals(6, actual.max()),
+            () -> assertEquals(12L, actual.sum()),
+            () -> assertEquals(4.0, actual.average(), 0.001)
+    );
   }
 
   @Test
   void testSetElementsTriggersObserverAndUpdatesWarehouse() {
     IntArray array = new IntArray(SAMPLE_ELEMENTS);
-    array.addObserver(observer);
+    array.setObserver(observer);
     observer.update(array);
 
     array.setElements(UPDATED_ELEMENTS);
 
     long arrayId = array.getId();
-    Optional<ArrayStatisticsData> result = warehouse.getStatistics(arrayId);
-    assertTrue(result.isPresent());
-    ArrayStatisticsData stats = result.get();
-    assertEquals(10, stats.getMin());
-    assertEquals(30, stats.getMax());
-    assertEquals(60L, stats.getSum());
+    Optional<ArrayStatisticsData> statsOpt = warehouse.getStatistics(arrayId);
+    assertTrue(statsOpt.isPresent());
+    ArrayStatisticsData actual = statsOpt.get();
+    assertAll(
+            () -> assertEquals(10, actual.min()),
+            () -> assertEquals(30, actual.max()),
+            () -> assertEquals(60L, actual.sum())
+    );
   }
 
   @Test
   void testUpdateOnEmptyArrayDoesNotStoreStatistics() {
-
     IntArray array = new IntArray(new int[]{});
 
     observer.update(array);
 
     long arrayId = array.getId();
-    Optional<ArrayStatisticsData> result = warehouse.getStatistics(arrayId);
-    assertTrue(result.isEmpty());
+    Optional<ArrayStatisticsData> actual = warehouse.getStatistics(arrayId);
+    assertTrue(actual.isEmpty());
   }
 }

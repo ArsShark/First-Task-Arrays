@@ -1,9 +1,12 @@
 package by.grechanikovars.arraytask.specification;
 
 import by.grechanikovars.arraytask.entity.IntArray;
-import by.grechanikovars.arraytask.observer.ArrayObserver;
 import by.grechanikovars.arraytask.observer.impl.ArrayStatisticsObserverImpl;
-import by.grechanikovars.arraytask.specification.impl.*;
+import by.grechanikovars.arraytask.specification.impl.FindByIdSpecificationImpl;
+import by.grechanikovars.arraytask.specification.impl.FindByMaxGreaterThanSpecificationImpl;
+import by.grechanikovars.arraytask.specification.impl.FindByMinLessThanSpecificationImpl;
+import by.grechanikovars.arraytask.specification.impl.FindBySumGreaterThanSpecificationImpl;
+import by.grechanikovars.arraytask.specification.impl.FindBySumLessThanSpecificationImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -19,11 +22,9 @@ class ArraySpecificationTest {
 
   @BeforeEach
   void setUp() {
-    ArrayObserver observer = new ArrayStatisticsObserverImpl();
-
+    ArrayStatisticsObserverImpl observer = new ArrayStatisticsObserverImpl();
     smallArray = new IntArray(SMALL_ELEMENTS);
     observer.update(smallArray);
-
     largeArray = new IntArray(LARGE_ELEMENTS);
     observer.update(largeArray);
   }
@@ -34,9 +35,9 @@ class ArraySpecificationTest {
     long targetId = smallArray.getId();
     FindByIdSpecificationImpl spec = new FindByIdSpecificationImpl(targetId);
     // when
-    boolean result = spec.specify(smallArray);
+    boolean actual = spec.test(smallArray);
     // then
-    assertTrue(result);
+    assertTrue(actual);
   }
 
   @Test
@@ -44,80 +45,88 @@ class ArraySpecificationTest {
     long targetId = smallArray.getId();
     FindByIdSpecificationImpl spec = new FindByIdSpecificationImpl(targetId);
 
-    boolean result = spec.specify(largeArray);
+    boolean actual = spec.test(largeArray);
 
-    assertFalse(result);
+    assertFalse(actual);
   }
 
   @Test
   void testFindBySumGreaterThanMatchesLargeArray() {
-    FindBySumGreaterThanSpecificationImpl spec = new FindBySumGreaterThanSpecificationImpl(100L);
+    FindBySumGreaterThanSpecificationImpl spec =
+            new FindBySumGreaterThanSpecificationImpl(100L);
 
-    boolean result = spec.specify(largeArray);
+    boolean actual = spec.test(largeArray);
 
-    assertTrue(result);
+    assertTrue(actual);
   }
 
   @Test
   void testFindBySumGreaterThanDoesNotMatchSmallArray() {
-    FindBySumGreaterThanSpecificationImpl spec = new FindBySumGreaterThanSpecificationImpl(100L);
+    FindBySumGreaterThanSpecificationImpl spec =
+            new FindBySumGreaterThanSpecificationImpl(100L);
 
-    boolean result = spec.specify(smallArray);
+    boolean actual = spec.test(smallArray);
 
-    assertFalse(result);
+    assertFalse(actual);
   }
 
   @Test
   void testFindBySumLessThanMatchesSmallArray() {
-    FindBySumLessThanSpecificationImpl spec = new FindBySumLessThanSpecificationImpl(100L);
+    FindBySumLessThanSpecificationImpl spec =
+            new FindBySumLessThanSpecificationImpl(100L);
 
-    boolean result = spec.specify(smallArray);
+    boolean actual = spec.test(smallArray);
 
-    assertTrue(result);
+    assertTrue(actual);
   }
 
   @Test
   void testFindBySumLessThanDoesNotMatchLargeArray() {
-    FindBySumLessThanSpecificationImpl spec = new FindBySumLessThanSpecificationImpl(100L);
+    FindBySumLessThanSpecificationImpl spec =
+            new FindBySumLessThanSpecificationImpl(100L);
 
-    boolean result = spec.specify(largeArray);
+    boolean actual = spec.test(largeArray);
 
-    assertFalse(result);
+    assertFalse(actual);
   }
 
   @Test
   void testFindByMaxGreaterThanMatchesLargeArray() {
-    FindByMaxGreaterThanSpecificationImpl spec = new FindByMaxGreaterThanSpecificationImpl(50);
+    FindByMaxGreaterThanSpecificationImpl spec =
+            new FindByMaxGreaterThanSpecificationImpl(50);
 
-    boolean result = spec.specify(largeArray);
+    boolean actual = spec.test(largeArray);
 
-    assertTrue(result);
+    assertTrue(actual);
   }
 
   @Test
   void testFindByMaxGreaterThanDoesNotMatchSmallArray() {
-    FindByMaxGreaterThanSpecificationImpl spec = new FindByMaxGreaterThanSpecificationImpl(50);
+    FindByMaxGreaterThanSpecificationImpl spec =
+            new FindByMaxGreaterThanSpecificationImpl(50);
 
-    boolean result = spec.specify(smallArray);
+    boolean actual = spec.test(smallArray);
 
-    assertFalse(result);
+    assertFalse(actual);
   }
 
   @Test
   void testFindByMinLessThanMatchesSmallArray() {
-    FindByMinLessThanSpecificationImpl spec = new FindByMinLessThanSpecificationImpl(10);
+    FindByMinLessThanSpecificationImpl spec =
+            new FindByMinLessThanSpecificationImpl(10);
 
-    boolean result = spec.specify(smallArray);
+    boolean actual = spec.test(smallArray);
 
-    assertTrue(result);
+    assertTrue(actual);
   }
 
   @Test
   void testFindByMinLessThanDoesNotMatchLargeArray() {
-    FindByMinLessThanSpecificationImpl spec = new FindByMinLessThanSpecificationImpl(10);
+    FindByMinLessThanSpecificationImpl spec =
+            new FindByMinLessThanSpecificationImpl(10);
 
-    boolean result = spec.specify(largeArray);
+    boolean actual = spec.test(largeArray);
 
-    assertFalse(result);
+    assertFalse(actual);
   }
 }

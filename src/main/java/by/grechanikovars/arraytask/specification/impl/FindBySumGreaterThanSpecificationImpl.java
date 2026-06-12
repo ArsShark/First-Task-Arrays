@@ -16,13 +16,13 @@ public class FindBySumGreaterThanSpecificationImpl implements ArraySpecification
   }
 
   @Override
-  public boolean specify(IntArray array) {
+  public boolean test(IntArray array) {
     ArrayWarehouse warehouse = ArrayWarehouse.getInstance();
     long arrayId = array.getId();
     Optional<ArrayStatisticsData> statsOpt = warehouse.getStatistics(arrayId);
     if (statsOpt.isPresent()) {
       ArrayStatisticsData stats = statsOpt.get();
-      long sum = stats.getSum();
+      long sum = stats.sum();
       return sum > threshold;
     } else {
       return false;

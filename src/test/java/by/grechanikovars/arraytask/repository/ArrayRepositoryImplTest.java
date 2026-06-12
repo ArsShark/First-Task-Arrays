@@ -19,27 +19,29 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class ArrayRepositoryImplTest {
 
-  private static final int[] SMALL_ELEMENTS = {1, 2, 3};
-  private static final int[] LARGE_ELEMENTS = {100, 200, 300};
-  private static final int[] SINGLE_ELEMENT = {42};
+  private static final int[] SMALL_ELEMENTS  = {1, 2, 3};
+  private static final int[] LARGE_ELEMENTS  = {100, 200, 300};
+  private static final int[] SINGLE_ELEMENT  = {42};
+  private static final int[] FIVE_ELEMENTS   = {1, 2, 3, 4, 5};
 
-  private ArrayRepository repository;
+  private ArrayRepositoryImpl repository;
 
   @BeforeEach
   void setUp() {
     repository = ArrayRepositoryImpl.getInstance();
+    repository.clear();
   }
 
   @Test
   void testAddIncreasesSize() {
     // given
     IntArray array = new IntArray(SMALL_ELEMENTS);
-    int sizeBefore = repository.getAll().size();
+    int expected = 1;
     // when
     repository.add(array);
     // then
-    int sizeAfter = repository.getAll().size();
-    assertEquals(sizeBefore + 1, sizeAfter);
+    int actual = repository.getAll().size();
+    assertEquals(expected, actual);
   }
 
   @Test
@@ -48,18 +50,18 @@ class ArrayRepositoryImplTest {
     repository.add(array);
     long arrayId = array.getId();
 
-    boolean result = repository.remove(arrayId);
+    boolean actual = repository.remove(arrayId);
 
-    assertTrue(result);
+    assertTrue(actual);
   }
 
   @Test
   void testRemoveReturnsFalseForMissingId() {
     long missingId = Long.MAX_VALUE;
 
-    boolean result = repository.remove(missingId);
+    boolean actual = repository.remove(missingId);
 
-    assertFalse(result);
+    assertFalse(actual);
   }
 
   @Test
@@ -67,81 +69,83 @@ class ArrayRepositoryImplTest {
     IntArray array = new IntArray(SMALL_ELEMENTS);
     repository.add(array);
     long arrayId = array.getId();
-    int sizeBefore = repository.getAll().size();
 
     repository.remove(arrayId);
 
-    int sizeAfter = repository.getAll().size();
-    assertEquals(sizeBefore - 1, sizeAfter);
+    int actual = repository.getAll().size();
+    assertEquals(0, actual);
   }
 
   @Test
-  void testFindAllByIdReturnsMatchingArray() {
+  void testFindByIdReturnsMatchingArray() {
     IntArray array = new IntArray(SMALL_ELEMENTS);
     repository.add(array);
     long arrayId = array.getId();
     FindByIdSpecificationImpl spec = new FindByIdSpecificationImpl(arrayId);
 
-    List<IntArray> result = repository.findAll(spec);
+    List<IntArray> actual = repository.findBy(spec);
 
-    assertEquals(1, result.size());
-    assertEquals(arrayId, result.get(0).getId());
+    assertAll(
+            () -> assertEquals(1, actual.size()),
+            () -> assertEquals(arrayId, actual.get(0).getId())
+    );
   }
 
   @Test
-  void testFindAllFunctionalBySumGreaterThan() {
-    IntArray small = new IntArray(SMALL_ELEMENTS);
+  void testFindByIdReturnsEmptyForMissingId() {
+    FindByIdSpecificationImpl spec = new FindByIdSpecificationImpl(Long.MAX_VALUE);
+
+    List<IntArray> actual = repository.findBy(spec);
+
+    assertTrue(actual.isEmpty());
+  }
+
+  @Test
+  void testFindByFunctionalSumGreaterThanReturnsLargeArray() {
     IntArray large = new IntArray(LARGE_ELEMENTS);
-    repository.add(small);
     repository.add(large);
+    ArrayWarehouse warehouse = ArrayWarehouse.getInstance();
+    long largeId = large.getId();
+    warehouse.updateStatistics(largeId, new ArrayStatisticsData(100, 300, 600L, 200.0));
     FindBySumGreaterThanSpecificationImpl spec = new FindBySumGreaterThanSpecificationImpl(100L);
 
-    List<IntArray> result = repository.findAllFunctional(spec);
+    List<IntArray> actual = repository.findByFunctional(spec);
 
-    assertFalse(result.isEmpty());
-    long largeId = large.getId();
-    boolean containsLarge = false;
-    for (IntArray a : result) {
-      if (a.getId() == largeId) {
-        containsLarge = true;
-        break;
-      }
-    }
-    assertTrue(containsLarge);
+    assertFalse(actual.isEmpty());
   }
 
   @Test
-  void testSortByIdProducesAscendingOrder() throws ArrayException {
-    IntArray first = new IntArray(LARGE_ELEMENTS);
-    IntArray second = new IntArray(SMALL_ELEMENTS);
-    repository.add(first);
-    repository.add(second);
+  void testSortByIdPlacesLowerIdFirst() throws ArrayException {
+    IntArray lower = new IntArray(SMALL_ELEMENTS);
+    IntArray higher = new IntArray(LARGE_ELEMENTS);
+    long lowerId = lower.getId();
+    long higherId = higher.getId();
+    repository.add(higher);
+    repository.add(lower);
 
     repository.sort(new ArrayIdComparator());
 
-    List<IntArray> all = repository.getAll();
-    for (int i = 0; i < all.size() - 1; i++) {
-      long currentId = all.get(i).getId();
-      long nextId = all.get(i + 1).getId();
-      assertTrue(currentId <= nextId);
-    }
+    List<IntArray> actual = repository.getAll();
+    assertAll(
+            () -> assertEquals(lowerId, actual.get(0).getId()),
+            () -> assertEquals(higherId, actual.get(1).getId())
+    );
   }
 
   @Test
-  void testSortBySizeProducesAscendingOrder() throws ArrayException {
-    IntArray big = new IntArray(new int[]{1, 2, 3, 4, 5});
+  void testSortBySizePlacesSmallerArrayFirst() throws ArrayException {
+    IntArray big = new IntArray(FIVE_ELEMENTS);
     IntArray small = new IntArray(SINGLE_ELEMENT);
     repository.add(big);
     repository.add(small);
 
     repository.sort(new ArraySizeComparator());
 
-    List<IntArray> all = repository.getAll();
-    for (int i = 0; i < all.size() - 1; i++) {
-      int currentSize = all.get(i).size();
-      int nextSize = all.get(i + 1).size();
-      assertTrue(currentSize <= nextSize);
-    }
+    List<IntArray> actual = repository.getAll();
+    assertAll(
+            () -> assertEquals(1, actual.get(0).length()),
+            () -> assertEquals(5, actual.get(1).length())
+    );
   }
 
   @Test
@@ -157,8 +161,8 @@ class ArrayRepositoryImplTest {
     IntArray array = new IntArray(SMALL_ELEMENTS);
     repository.add(array);
 
-    List<IntArray> result = repository.getAll();
-    result.clear();
+    List<IntArray> copy = repository.getAll();
+    copy.clear();
 
     assertFalse(repository.getAll().isEmpty());
   }
@@ -169,13 +173,11 @@ class ArrayRepositoryImplTest {
     repository.add(array);
     long arrayId = array.getId();
     repository.remove(arrayId);
+    ArrayWarehouse.getInstance().removeStatistics(arrayId);
 
-    ArrayWarehouse warehouseBefore = ArrayWarehouse.getInstance();
-    warehouseBefore.removeStatistics(arrayId);
     array.setElements(new int[]{999, 999, 999});
 
-    ArrayWarehouse warehouseAfter = ArrayWarehouse.getInstance();
-    Optional<ArrayStatisticsData> result = warehouseAfter.getStatistics(arrayId);
-    assertTrue(result.isEmpty());
+    Optional<ArrayStatisticsData> actual = ArrayWarehouse.getInstance().getStatistics(arrayId);
+    assertTrue(actual.isEmpty());
   }
 }

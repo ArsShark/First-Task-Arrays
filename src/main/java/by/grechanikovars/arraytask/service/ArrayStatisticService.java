@@ -5,7 +5,7 @@ import by.grechanikovars.arraytask.exception.ArrayException;
 
 import java.util.Optional;
 
-public interface ArrayStatService {
+public interface ArrayStatisticService {
 
   Optional<Integer> findMin(IntArray array) throws ArrayException;
 

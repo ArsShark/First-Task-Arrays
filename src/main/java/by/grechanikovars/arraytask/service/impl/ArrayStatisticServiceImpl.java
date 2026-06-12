@@ -2,7 +2,7 @@ package by.grechanikovars.arraytask.service.impl;
 
 import by.grechanikovars.arraytask.entity.IntArray;
 import by.grechanikovars.arraytask.exception.ArrayException;
-import by.grechanikovars.arraytask.service.ArrayStatService;
+import by.grechanikovars.arraytask.service.ArrayStatisticService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -12,9 +12,9 @@ import java.util.OptionalInt;
 import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 
-public class ArrayStatServiceImpl implements ArrayStatService {
+public class ArrayStatisticServiceImpl implements ArrayStatisticService {
 
-  private static final Logger logger = LogManager.getLogger(ArrayStatServiceImpl.class);
+  private static final Logger logger = LogManager.getLogger(ArrayStatisticServiceImpl.class);
 
   @Override
   public Optional<Integer> findMin(IntArray array) throws ArrayException {

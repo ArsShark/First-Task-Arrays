@@ -12,7 +12,7 @@ public class FindByIdSpecificationImpl implements ArraySpecification {
   }
 
   @Override
-  public boolean specify(IntArray array) {
+  public boolean test(IntArray array) {
     long arrayId = array.getId();
     return arrayId == id;
   }

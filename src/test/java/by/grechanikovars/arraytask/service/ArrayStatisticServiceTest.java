@@ -2,7 +2,7 @@ package by.grechanikovars.arraytask.service;
 
 import by.grechanikovars.arraytask.entity.IntArray;
 import by.grechanikovars.arraytask.exception.ArrayException;
-import by.grechanikovars.arraytask.service.impl.ArrayStatServiceImpl;
+import by.grechanikovars.arraytask.service.impl.ArrayStatisticServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -10,7 +10,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class ArrayStatServiceTest {
+class ArrayStatisticServiceTest {
 
   private static final int[] MIXED_ELEMENTS = {3, 1, 4, 1, 5, 9, 2, 6};
   private static final int[] EMPTY_ELEMENTS = {};
@@ -18,11 +18,11 @@ class ArrayStatServiceTest {
   private static final int[] NEGATIVE_ELEMENTS = {-5, -3, -1, -10};
   private static final int[] SYMMETRIC_ELEMENTS = {2, 4, 6};
 
-  private ArrayStatService service;
+  private ArrayStatisticService service;
 
   @BeforeEach
   void setUp() {
-    service = new ArrayStatServiceImpl();
+    service = new ArrayStatisticServiceImpl();
   }
 
 

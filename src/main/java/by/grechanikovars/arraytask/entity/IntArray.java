@@ -1,58 +1,43 @@
 package by.grechanikovars.arraytask.entity;
 
+import by.grechanikovars.arraytask.annotation.NotifyObserver;
 import by.grechanikovars.arraytask.observer.ArrayObserver;
+import by.grechanikovars.arraytask.util.IdGenerator;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
-
 
 public class IntArray extends AbstractArray {
 
-  private static long idCounter = 0L;
-
-  private final long id;
   private int[] elements;
-  private final List<ArrayObserver> observers;
-
+  private ArrayObserver observer;
 
   public IntArray(int[] elements) {
-    this.id = ++idCounter;
+    this.id = IdGenerator.generateId();
     this.elements = Arrays.copyOf(elements, elements.length);
-    this.observers = new ArrayList<>();
-  }
-
-  @Override
-  public long getId() {
-    return id;
   }
 
   public int[] getElements() {
     return Arrays.copyOf(elements, elements.length);
   }
 
-
+  @NotifyObserver
   public void setElements(int[] elements) {
     this.elements = Arrays.copyOf(elements, elements.length);
-    notifyObservers();
+    notifyObserver();
   }
 
-  public void addObserver(ArrayObserver observer) {
-    observers.add(observer);
+  public void setObserver(ArrayObserver observer) {
+    this.observer = observer;
   }
 
-  public void removeObserver(ArrayObserver observer) {
-    observers.remove(observer);
-  }
-
-  private void notifyObservers() {
-    for (ArrayObserver observer : observers) {
+  private void notifyObserver() {
+    if (observer != null) {
       observer.update(this);
     }
   }
 
   @Override
-  public int size() {
+  public int length() {
     return elements.length;
   }
 

@@ -2,7 +2,11 @@ package by.grechanikovars.arraytask.entity;
 
 public abstract class AbstractArray {
 
-  public abstract long getId();
+  protected long id;
 
-  public abstract int size();
+  public long getId() {
+    return id;
+  }
+
+  public abstract int length();
 }

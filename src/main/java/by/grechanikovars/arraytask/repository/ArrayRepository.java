@@ -2,10 +2,10 @@ package by.grechanikovars.arraytask.repository;
 
 import by.grechanikovars.arraytask.entity.IntArray;
 import by.grechanikovars.arraytask.exception.ArrayException;
-import by.grechanikovars.arraytask.specification.ArraySpecification;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.function.Predicate;
 
 public interface ArrayRepository {
 
@@ -13,9 +13,9 @@ public interface ArrayRepository {
 
   boolean remove(long id);
 
-  List<IntArray> findAll(ArraySpecification specification);
+  List<IntArray> findBy(Predicate<IntArray> predicate);
 
-  List<IntArray> findAllFunctional(ArraySpecification specification);
+  List<IntArray> findByFunctional(Predicate<IntArray> predicate);
 
   void sort(Comparator<IntArray> comparator) throws ArrayException;
 

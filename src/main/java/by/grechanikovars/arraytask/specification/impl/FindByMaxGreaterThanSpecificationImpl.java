@@ -16,13 +16,13 @@ public class FindByMaxGreaterThanSpecificationImpl implements ArraySpecification
   }
 
   @Override
-  public boolean specify(IntArray array) {
+  public boolean test(IntArray array) {
     ArrayWarehouse warehouse = ArrayWarehouse.getInstance();
     long arrayId = array.getId();
     Optional<ArrayStatisticsData> statsOpt = warehouse.getStatistics(arrayId);
     if (statsOpt.isPresent()) {
       ArrayStatisticsData stats = statsOpt.get();
-      int max = stats.getMax();
+      int max = stats.max();
       return max > threshold;
     } else {
       return false;

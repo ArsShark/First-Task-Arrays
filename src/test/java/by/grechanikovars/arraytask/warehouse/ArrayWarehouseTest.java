@@ -34,41 +34,48 @@ class ArrayWarehouseTest {
   }
 
   @Test
-  void testUpdateAndRetrieveStatistics() {
+  void testUpdateAndRetrieveStatisticsReturnsPresent() {
     warehouse.updateStatistics(ARRAY_ID_1, STATS_1);
 
-    Optional<ArrayStatisticsData> result = warehouse.getStatistics(ARRAY_ID_1);
+    Optional<ArrayStatisticsData> actual = warehouse.getStatistics(ARRAY_ID_1);
 
-    assertTrue(result.isPresent());
+    assertTrue(actual.isPresent());
   }
 
   @Test
-  void testRetrievedStatisticsHaveCorrectMin() {
+  void testRetrievedStatisticsHaveCorrectValues() {
     warehouse.updateStatistics(ARRAY_ID_1, STATS_1);
+    Optional<ArrayStatisticsData> statsOpt = warehouse.getStatistics(ARRAY_ID_1);
 
-    Optional<ArrayStatisticsData> result = warehouse.getStatistics(ARRAY_ID_1);
-
-    assertTrue(result.isPresent());
-    ArrayStatisticsData stats = result.get();
-    assertEquals(1, stats.getMin());
+    assertTrue(statsOpt.isPresent());
+    ArrayStatisticsData actual = statsOpt.get();
+    assertAll(
+            () -> assertEquals(1,    actual.min()),
+            () -> assertEquals(10,   actual.max()),
+            () -> assertEquals(55L,  actual.sum()),
+            () -> assertEquals(5.5,  actual.average(), 0.001)
+    );
   }
 
   @Test
-  void testRetrievedStatisticsHaveCorrectSum() {
+  void testRetrievedStatisticsHaveCorrectMinForNegativeValues() {
     warehouse.updateStatistics(ARRAY_ID_2, STATS_2);
 
-    Optional<ArrayStatisticsData> result = warehouse.getStatistics(ARRAY_ID_2);
+    Optional<ArrayStatisticsData> statsOpt = warehouse.getStatistics(ARRAY_ID_2);
 
-    assertTrue(result.isPresent());
-    ArrayStatisticsData stats = result.get();
-    assertEquals(20L, stats.getSum());
+    assertTrue(statsOpt.isPresent());
+    ArrayStatisticsData actual = statsOpt.get();
+    assertAll(
+            () -> assertEquals(-3,  actual.min()),
+            () -> assertEquals(20L, actual.sum())
+    );
   }
 
   @Test
   void testGetStatisticsForMissingIdReturnsEmpty() {
-    Optional<ArrayStatisticsData> result = warehouse.getStatistics(MISSING_ID);
+    Optional<ArrayStatisticsData> actual = warehouse.getStatistics(MISSING_ID);
 
-    assertTrue(result.isEmpty());
+    assertTrue(actual.isEmpty());
   }
 
   @Test
@@ -77,8 +84,8 @@ class ArrayWarehouseTest {
 
     warehouse.removeStatistics(ARRAY_ID_1);
 
-    Optional<ArrayStatisticsData> result = warehouse.getStatistics(ARRAY_ID_1);
-    assertTrue(result.isEmpty());
+    Optional<ArrayStatisticsData> actual = warehouse.getStatistics(ARRAY_ID_1);
+    assertTrue(actual.isEmpty());
   }
 
   @Test
@@ -87,9 +94,9 @@ class ArrayWarehouseTest {
 
     warehouse.updateStatistics(ARRAY_ID_1, STATS_2);
 
-    Optional<ArrayStatisticsData> result = warehouse.getStatistics(ARRAY_ID_1);
-    assertTrue(result.isPresent());
-    ArrayStatisticsData stats = result.get();
-    assertEquals(-3, stats.getMin());
+    Optional<ArrayStatisticsData> statsOpt = warehouse.getStatistics(ARRAY_ID_1);
+    assertTrue(statsOpt.isPresent());
+    ArrayStatisticsData actual = statsOpt.get();
+    assertEquals(-3, actual.min());
   }
 }

@@ -24,6 +24,10 @@ public class IntLineParserImpl implements LineParser {
     if (numbers.isEmpty()) {
       logger.warn("No integers found in line: [{}]", line);
     }
-    return numbers.stream().mapToInt(Integer::intValue).toArray();
+    int[] result = new int[numbers.size()];
+    for (int i = 0; i < numbers.size(); i++) {
+      result[i] = numbers.get(i);
+    }
+    return result;
   }
 }

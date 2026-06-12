@@ -8,8 +8,8 @@ public class ArraySizeComparator implements Comparator<IntArray> {
 
   @Override
   public int compare(IntArray first, IntArray second) {
-    int firstSize = first.size();
-    int secondSize = second.size();
+    int firstSize = first.length();
+    int secondSize = second.length();
     return Integer.compare(firstSize, secondSize);
   }
 }

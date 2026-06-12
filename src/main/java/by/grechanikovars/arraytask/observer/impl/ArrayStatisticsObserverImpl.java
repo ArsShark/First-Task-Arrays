@@ -3,8 +3,8 @@ package by.grechanikovars.arraytask.observer.impl;
 import by.grechanikovars.arraytask.entity.IntArray;
 import by.grechanikovars.arraytask.exception.ArrayException;
 import by.grechanikovars.arraytask.observer.ArrayObserver;
-import by.grechanikovars.arraytask.service.ArrayStatService;
-import by.grechanikovars.arraytask.service.impl.ArrayStatServiceImpl;
+import by.grechanikovars.arraytask.service.ArrayStatisticService;
+import by.grechanikovars.arraytask.service.impl.ArrayStatisticServiceImpl;
 import by.grechanikovars.arraytask.warehouse.ArrayStatisticsData;
 import by.grechanikovars.arraytask.warehouse.ArrayWarehouse;
 import org.apache.logging.log4j.LogManager;
@@ -16,10 +16,10 @@ public class ArrayStatisticsObserverImpl implements ArrayObserver {
 
   private static final Logger logger = LogManager.getLogger(ArrayStatisticsObserverImpl.class);
 
-  private final ArrayStatService statService;
+  private final ArrayStatisticService statService;
 
   public ArrayStatisticsObserverImpl() {
-    this.statService = new ArrayStatServiceImpl();
+    this.statService = new ArrayStatisticServiceImpl();
   }
 
   @Override

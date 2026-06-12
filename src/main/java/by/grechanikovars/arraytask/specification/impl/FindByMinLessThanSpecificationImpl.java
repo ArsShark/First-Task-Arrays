@@ -16,13 +16,13 @@ public class FindByMinLessThanSpecificationImpl implements ArraySpecification {
   }
 
   @Override
-  public boolean specify(IntArray array) {
+  public boolean test(IntArray array) {
     ArrayWarehouse warehouse = ArrayWarehouse.getInstance();
     long arrayId = array.getId();
     Optional<ArrayStatisticsData> statsOpt = warehouse.getStatistics(arrayId);
     if (statsOpt.isPresent()) {
       ArrayStatisticsData stats = statsOpt.get();
-      int min = stats.getMin();
+      int min = stats.min();
       return min < threshold;
     } else {
       return false;

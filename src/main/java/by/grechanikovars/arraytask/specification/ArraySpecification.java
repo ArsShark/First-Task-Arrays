@@ -2,7 +2,7 @@ package by.grechanikovars.arraytask.specification;
 
 import by.grechanikovars.arraytask.entity.IntArray;
 
-public interface ArraySpecification {
+import java.util.function.Predicate;
 
-  boolean specify(IntArray array);
+public interface ArraySpecification extends Predicate<IntArray> {
 }
