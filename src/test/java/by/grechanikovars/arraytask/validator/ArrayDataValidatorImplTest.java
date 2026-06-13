@@ -3,105 +3,76 @@ package by.grechanikovars.arraytask.validator;
 import by.grechanikovars.arraytask.validator.impl.ArrayDataValidatorImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
-
 
 class ArrayDataValidatorImplTest {
 
   private DataValidator validator;
+
+  static Stream<Arguments> provideValidLines() {
+    return Stream.of(
+            Arguments.of("1; 2; 3"),
+            Arguments.of("1, 2, 3"),
+            Arguments.of("3 4 7"),
+            Arguments.of("11 - 2 - 42"),
+            Arguments.of("99"),
+            Arguments.of("100 200 300")
+    );
+  }
+
+  static Stream<Arguments> provideInvalidLines() {
+    return Stream.of(
+            Arguments.of("1y1 21 32"),
+            Arguments.of("6..5 77"),
+            Arguments.of("abc xyz"),
+            Arguments.of(""),
+            Arguments.of("   "),
+            Arguments.of("!@#$%")
+    );
+  }
 
   @BeforeEach
   void setUp() {
     validator = new ArrayDataValidatorImpl();
   }
 
-  @Test
-  void testSemicolonSeparatedLineIsValid() {
-    // given
-    String line = "1; 2; 3";
+  @ParameterizedTest
+  @MethodSource("provideValidLines")
+  void testValidLineParametrized(String line) {
+    // given — line provided by method source
     // when
-    boolean result = validator.isLineValid(line);
+    boolean actual = validator.isLineValid(line);
     // then
-    assertTrue(result);
+    assertTrue(actual);
   }
 
-  @Test
-  void testCommaSeparatedLineIsValid() {
-    String line = "1, 2, 3";
+  @ParameterizedTest
+  @MethodSource("provideInvalidLines")
+  void testInvalidLineParametrized(String line) {
+    boolean actual = validator.isLineValid(line);
 
-    boolean result = validator.isLineValid(line);
-
-    assertTrue(result);
-  }
-
-  @Test
-  void testSpaceSeparatedLineIsValid() {
-
-    String line = "3 4 7";
-
-    boolean result = validator.isLineValid(line);
-
-    assertTrue(result);
-  }
-
-  @Test
-  void testHyphenSeparatedLineIsValid() {
-
-    String line = "11 - 2 - 42";
-
-    boolean result = validator.isLineValid(line);
-
-    assertTrue(result);
-  }
-
-  @Test
-  void testLineWithLettersIsInvalid() {
-
-    String line = "1y1 21 32";
-
-    boolean result = validator.isLineValid(line);
-
-    assertFalse(result);
-  }
-
-  @Test
-  void testLineWithDoubleDotIsInvalid() {
-
-    String line = "6..5 77";
-
-    boolean result = validator.isLineValid(line);
-
-    assertFalse(result);
+    assertFalse(actual);
   }
 
   @Test
   void testNullLineIsInvalid() {
+    boolean actual = validator.isLineValid(null);
 
-    String line = null;
-
-    boolean result = validator.isLineValid(line);
-
-    assertFalse(result);
+    assertFalse(actual);
   }
 
   @Test
   void testEmptyLineIsInvalid() {
-
     String line = "";
 
-    boolean result = validator.isLineValid(line);
+    boolean actual = validator.isLineValid(line);
 
-    assertFalse(result);
-  }
-
-  @Test
-  void testBlankLineIsInvalid() {
-
-    String line = "   ";
-
-    boolean result = validator.isLineValid(line);
-
-    assertFalse(result);
+    assertFalse(actual);
   }
 }
